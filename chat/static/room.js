@@ -66,7 +66,7 @@ function connect() {
 
         switch (data.type) {
             case "chat_message":
-                chatLog.value += data.message + "\n";
+                chatLog.value += data.user + ": " + data.message + "\n";
                 break;
             default:
                 console.error("Unknown message type!");
