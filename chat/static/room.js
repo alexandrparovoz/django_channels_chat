@@ -74,11 +74,11 @@ function connect() {
                 }
                 break;
             case "user_join":
-                chatLog.value += data.user + " joined the room.\n";
+                chatLog.value += data.user + " присоединился к комнате.\n";
                 onlineUsersSelectorAdd(data.user);
                 break;
             case "user_leave":
-                chatLog.value += data.user + " left the room.\n";
+                chatLog.value += data.user + " покинул комнату.\n";
                 onlineUsersSelectorRemove(data.user);
                 break;
             case "private_message":
@@ -88,7 +88,7 @@ function connect() {
                 chatLog.value += "PM to " + data.target + ": " + data.message + "\n";
                 break;
             default:
-                console.error("Unknown message type!");
+                console.error("Ничего не понял!");
                 break;
         }
 
