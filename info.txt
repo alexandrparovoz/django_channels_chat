@@ -1,0 +1,27 @@
+1.Создаем проект джанго
+2.Вместо db.sqlite3 прописываем в settings PostgreSQL
+3.Инсталлируем daphne, channels, channels-redis
+4.запускаем редис через докер на порту 6379
+ docker run -p 6379:6379 -d redis:5
+5.В settings прописывем путь к серверу redis для работы с channels-redis
+6.Проверяем это подключение в shell
+>>> import channels.layers
+>>> channel_layer = channels.layers.get_channel_layer()
+>>> from asgiref.sync import async_to_sync
+>>> async_to_sync(channel_layer.send)('test_channel', {'type': 'hello'})
+>>> async_to_sync(channel_layer.receive)('test_channel')
+  Результат должен быть таков: {'type': 'hello'}
+
+7.В nodels создаем модели таблиц для комнат и сообщений
+8.Делаем миграции
+9.Регистрируем модели в админе
+10.Во вьюсах пишем функции для раскрытия index.html (с выводом существующих
+комнат) и room.html (переход в указанную комнату или создание и переход)
+11.Создаем index.html и room.html
+12. В index.html выводим данные, заключенные на JS в файле index.js
+через тег script <script src="{% static 'index.js' %}"></script>
+13. B room.html через тег   json_script присоединяем код, написанный на JS
+{{ room.name|json_script:"roomName" }}
+14.Создаем comsumers и пишем в нем соединение, разъединение и посыл распарсенного меседжа
+15. Пишем путь в routing для WS (как http во  views)
+16.
