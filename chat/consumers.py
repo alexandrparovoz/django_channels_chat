@@ -31,12 +31,18 @@ class ChatConsumer(WebsocketConsumer):
             self.room_group_name,
             self.channel_name,
         )
+        # send the user list to the newly joined user
         self.send(json.dumps({
             'type': 'user_list',
             'users': [user.username for user in self.room.online.all()],
         }))
 
         if self.user.is_authenticated:
+            # create a user inbox for private messages
+            async_to_sync(self.channel_layer.group_add)(
+                self.user_inbox,
+                self.channel_name,
+            )
             # send the join event to the room
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
@@ -47,10 +53,6 @@ class ChatConsumer(WebsocketConsumer):
             )
             self.room.online.add(self.user)
 
-            async_to_sync(self.channel_layer.group_add)(
-                self.user_inbox,
-                self.channel_name,
-            )
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(
@@ -58,6 +60,10 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name,
         )
         if self.user.is_authenticated:
+            async_to_sync(self.channel_layer.group_discard)(
+                self.user_inbox,
+                self.channel_name,
+            )
             # send the leave event to the room
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
@@ -68,10 +74,6 @@ class ChatConsumer(WebsocketConsumer):
             )
             self.room.online.remove(self.user)
 
-            async_to_sync(self.channel_layer.group_discard)(
-                self.user_inbox,
-                self.channel_name,
-            )
 
     def receive(self, text_data=None, bytes_data=None):
         text_data_json = json.loads(text_data)
